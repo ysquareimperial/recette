@@ -5,7 +5,7 @@ function App() {
   const [data, setData] = useState([])
   const [buttonClick, setButtonClick] = useState(false)
   const [inputValue, setInputValue] = useState('')
-
+  const [loading, setLoading] = useState(false)
   const handleInputChange = (event) => {
     setInputValue(event.target.value)
   }
