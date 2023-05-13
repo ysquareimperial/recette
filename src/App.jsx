@@ -1,33 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+// import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState([])
+  const [buttonClick, setButtonClick] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value)
+  }
+
+  const handleClick = () => {
+    setButtonClick(true)
+  }
+
+  useEffect(() => {
+    if (buttonClick) {
+      fetch(
+        `https://api.edamam.com/api/recipes/v2?type=public&q=${inputValue}&app_id=2865996b&app_key=beaceb757b7158dac76ae87fda011cf1`,
+      )
+        .then((response) => response.json())
+        .then((data) => setData(data))
+    }
+  }, [buttonClick])
+
+  console.log(data)
 
   return (
     <>
+      {JSON.stringify(inputValue)}
+
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input
+          type="search"
+          name="value"
+          value={inputValue}
+          onChange={handleInputChange}
+        />
+        <button onClick={handleClick}>Search</button>
+        <h1>
+          {data.hits?.map((item, index) => (
+            <>
+              <p>{item.recipe['url']}</p>
+              <p>{item.recipe.calories}</p>
+              <p>{item.recipe.cuisineType}</p>
+              <p>{item.recipe.dietLabels}</p>
+              <p>{item.recipe.healthLabels}</p>
+              <p>
+                {item.recipe?.digest.map((item, index) => (
+                  <span>{item.label}</span>
+                ))}
+              </p>
+              <img
+                src={item.recipe.image}
+                style={{ width: 50, height: 50 }}
+                alt=""
+              />
+            </>
+          ))}
+        </h1>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
