@@ -3,26 +3,18 @@ import { useEffect, useState } from 'react'
 
 function App() {
   const [data, setData] = useState([])
-  const [buttonClick, setButtonClick] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [loading, setLoading] = useState(false)
   const handleInputChange = (event) => {
     setInputValue(event.target.value)
   }
 
-  const handleClick = () => {
-    setButtonClick(true)
+  const search = () => {
+    fetch(
+      `https://api.edamam.com/api/recipes/v2?type=public&q=${inputValue}&app_id=2865996b&app_key=beaceb757b7158dac76ae87fda011cf1`,
+    )
+      .then((response) => response.json())
+      .then((data) => setData(data))
   }
-
-  useEffect(() => {
-    if (buttonClick) {
-      fetch(
-        `https://api.edamam.com/api/recipes/v2?type=public&q=${inputValue}&app_id=2865996b&app_key=beaceb757b7158dac76ae87fda011cf1`,
-      )
-        .then((response) => response.json())
-        .then((data) => setData(data))
-    }
-  }, [buttonClick])
 
   console.log(data)
 
@@ -37,7 +29,7 @@ function App() {
           value={inputValue}
           onChange={handleInputChange}
         />
-        <button onClick={handleClick}>Search</button>
+        <button onClick={search}>Search</button>
         <h1>
           {data.hits?.map((item, index) => (
             <>
